@@ -15,4 +15,4 @@ async def interface(request):
 
 
 if __name__ == '__main__':
-    main.run(port=80, debug=True)
+    main.run(host='0.0.0.0',port=80, debug=True)
