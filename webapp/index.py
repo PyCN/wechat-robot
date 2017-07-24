@@ -17,7 +17,7 @@ async def interface(request):
 @main.route('/sign', methods=['GET'])
 def signature(request):
     print('>>>', request.raw_args)
-    return json(request.raw_args)
+    return json(request.raw_args.get('echostr'))
 
 
 if __name__ == '__main__':
