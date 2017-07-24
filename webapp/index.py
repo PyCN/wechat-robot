@@ -14,5 +14,11 @@ async def interface(request):
     return json({"received": True, "message": request.json})
 
 
+@main.route('/sign', methods=['GET'])
+def signature(request):
+    print('>>>', request.raw_args)
+    return json(request.raw_args)
+
+
 if __name__ == '__main__':
-    main.run(host='0.0.0.0',port=80, debug=True)
+    main.run(host='0.0.0.0', port=80, debug=True)
