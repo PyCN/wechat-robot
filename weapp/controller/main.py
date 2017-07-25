@@ -41,13 +41,13 @@ async def signature(request):
             return text('')
         request_msg = parse_message(request.body)
         request_msg_type = request_msg.type
-        print('>>>', request.body, request_msg)
+        print('>>> {}\n{}\n{}'.format(request.body, request_msg_type, request_msg))
         reply = ''
         if request_msg_type == 'text':
             reply = TextReply(content='你所发的是文本:{}'.format(request_msg.content), message=request_msg)
         if request_msg_type == 'image':
             reply = ImageReply(message=request_msg)
-            reply.media_id = 'image media id'
+            reply.media_id = request_msg.media_id
         if request_msg_type == 'voice':
             reply = VoiceReply(message=request_msg)
             reply.media_id = 'voice media id'
