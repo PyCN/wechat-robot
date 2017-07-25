@@ -50,7 +50,7 @@ async def signature(request):
             reply.media_id = request_msg.media_id
         if request_msg_type == 'voice':
             reply = VoiceReply(message=request_msg)
-            reply.media_id = 'voice media id'
+            reply.media_id = request_msg.media_id
 
         # 返回xml报文
         xml = reply.render()
