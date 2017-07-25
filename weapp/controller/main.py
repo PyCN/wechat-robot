@@ -51,10 +51,9 @@ async def signature(request):
             # 验证成功后, 接受消息
             if len(request.body) == 0:
                 return text('')
-            request_msg = parse_message(request.body)
+            request_msg = ''
             # 解密报文
             if encrypt_type == 'aes':
-
                 crypto = WeChatCrypto(token, encoding_aes_key, appid)
                 try:
                     decrypted_xml = crypto.decrypt_message(
@@ -68,6 +67,8 @@ async def signature(request):
                     pass
                 else:
                     request_msg = parse_message(decrypted_xml)
+            else:
+                request_msg = parse_message(request.body)
 
             request_msg_type = request_msg.type
             log.info('>>> request.body[{}],request_msg_type[{}],request_msg[{}]'.format(request.body, request_msg_type,
