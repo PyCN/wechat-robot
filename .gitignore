@@ -6,3 +6,4 @@ migrations
 */*.log
 access.log 
 error.log
+*.sh

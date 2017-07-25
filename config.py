@@ -9,23 +9,29 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config(object):
-    pass
+    WECHAT_TOKEN = os.environ.get('WECHAT_TOKEN') or 'hard to guess string'
+
+    @classmethod
+    def init_app(cls, app):
+        pass
 
 
 class DevConfig(Config):
-    SANIC_DEBUG = True
+    DEBUG = True
 
-    def __init__(self):
-        print('>>> current config: dev')
+    @classmethod
+    def init_app(cls, app):
+        Config.init_app(app)
 
-    pass
+        # log to stderr
 
 
 class PrdConfig(Config):
-    SANIC_DEBUG = False
+    DEBUG = False
 
-    def __init__(self):
-        print('>>> current config: prd')
+    @classmethod
+    def init_app(cls, app):
+        Config.init_app(app)
 
     pass
 
@@ -33,5 +39,5 @@ class PrdConfig(Config):
 config = {
     'dev': DevConfig,
     'prd': PrdConfig,
-    'default': DevConfig
+    'default': PrdConfig
 }

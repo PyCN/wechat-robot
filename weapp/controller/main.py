@@ -15,13 +15,12 @@ bp = Blueprint('main', __name__)
 
 @bp.route('/', methods=['GET', 'POST'])
 async def index(request):
-    print('>>>', request.method)
     return text('hello, world')
 
 
 @bp.route('/interface', methods=['GET', 'POST'])
 async def signature(request):
-    token = request.raw_args.get('token')
+    token = request.app.config.get('WECHAT_TOKEN', None)
     signature = request.raw_args.get('signature')
     timestamp = request.raw_args.get('timestamp')
     nonce = request.raw_args.get('nonce')

@@ -12,6 +12,7 @@ from config import config
 def create_app(config_name):
     app = Sanic(__name__)
     app.config.from_object(config[config_name])
+    config[config_name].init_app(app)
 
     # blueprint
     register_blueprint(app)
