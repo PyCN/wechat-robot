@@ -33,7 +33,6 @@ async def signature(request):
     nonce = request.raw_args.get('nonce')
     echostr = request.raw_args.get('echostr')
     msg_signature = request.raw_args.get('msg_signature')
-
     encrypt_type = request.raw_args.get('encrypt_type')
 
     try:
@@ -44,14 +43,13 @@ async def signature(request):
         return text('验证异常')
     else:
         if request.method == 'GET':
-            # netlog.info('>>> {}'.format('验证ok'))
-            print('>>>', text(echostr), echostr)
+            log.info('>>> {},{}'.format(request.raw_args, '验证ok'))
             return text(echostr)
         else:
             # 验证成功后, 接受消息
             if len(request.body) == 0:
                 return text('')
-            request_msg = ''
+
             # 解密报文
             if encrypt_type == 'aes':
                 crypto = WeChatCrypto(token, encoding_aes_key, appid)
@@ -63,8 +61,8 @@ async def signature(request):
                         nonce
                     )
                 except (InvalidAppIdException, InvalidSignatureException):
-                    # 处理异常或忽略
-                    pass
+                    # to-do: 处理异常或忽略
+                    return text('')
                 else:
                     request_msg = parse_message(decrypted_xml)
             else:
