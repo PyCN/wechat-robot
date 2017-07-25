@@ -39,5 +39,5 @@ async def signature(request):
         print('>>>', request.body)
         msg = parse_message(request.body)
         print('>>>>>', msg)
-
-    return
+        return text(msg)
+    return text('')
