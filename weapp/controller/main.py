@@ -37,6 +37,8 @@ async def signature(request):
             print('>>>', '验证ok')
             return text(echostr)
     elif request.method == 'POST':
+        if len(request.body) == 0:
+            return text('')
         request_msg = parse_message(request.body)
         print('>>>', request.body, request_msg)
         request_msg_type = request_msg.type
