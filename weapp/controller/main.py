@@ -4,6 +4,7 @@
 __author__ = 'yueyt'
 
 from sanic import Blueprint
+from sanic.log import log
 from sanic.response import text
 from wechatpy import parse_message
 from wechatpy.exceptions import InvalidSignatureException
@@ -30,18 +31,18 @@ async def signature(request):
             check_signature(token, signature, timestamp, nonce)
         except InvalidSignatureException:
             # 处理异常情况或忽略
-            print('>>>', request.raw_args, '验证异常')
+            log.info('>>> {},{}'.format(request.raw_args, '验证异常'))
             return text('验证异常')
         else:
-            print('>>>', '验证ok')
+            log.info('>>> {}'.format('验证ok'))
             return text(echostr)
     elif request.method == 'POST':
         if len(request.body) == 0:
             return text('')
         request_msg = parse_message(request.body)
         request_msg_type = request_msg.type
-        print('>>> {}\n{}\n{}'.format(request.body, request_msg_type, request_msg))
-        reply = ''
+        log.info('>>> request.body[{}],request_msg_type[{}],request_msg[{}]'.format(request.body, request_msg_type,
+                                                                                    request_msg))
         if request_msg_type == 'text':
             reply = TextReply(content='你所发的是文本:{}'.format(request_msg.content), message=request_msg)
         elif request_msg_type == 'image':
