@@ -6,6 +6,7 @@ __author__ = 'yueyt'
 from sanic import Blueprint
 from sanic.log import log, netlog
 from sanic.response import text
+from translate import Translator
 from wechatpy import parse_message
 from wechatpy.crypto import WeChatCrypto
 from wechatpy.exceptions import InvalidSignatureException, InvalidAppIdException
@@ -93,12 +94,19 @@ def text_reply(text, req_msg):
     do_type = text[:2]
     if do_type == '翻译':
         resp = translate_text(text[2:])
+    elif do_type == '快递':
+        resp = kudi_text(text[2:])
     else:
-        resp = 'else'
-    return TextReply(content=resp, message=req_msg)
+        resp = 'ooo, 不明白你的意思!'
+    return TextReply(content='{}'.format(resp), message=req_msg)
 
 
 def translate_text(text):
-    from translate import Translator
+    if not text:
+        return None
     translator = Translator(from_lang='zh', to_lang="en")
     return translator.translate(text)
+
+
+def kudi_text(text):
+    pass
