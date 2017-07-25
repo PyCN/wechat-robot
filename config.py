@@ -10,6 +10,8 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
     WECHAT_TOKEN = os.environ.get('WECHAT_TOKEN') or 'hard to guess string'
+    WECHAT_ENCODING_AES_KEY = os.environ.get('WECHAT_ENCODING_AES_KEY=') or 'hard to guess string'
+    WECHAT_APPID = os.environ.get('WECHAT_APPID') or 'hard to guess string'
 
     @classmethod
     def init_app(cls, app):
