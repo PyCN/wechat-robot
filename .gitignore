@@ -4,4 +4,5 @@ __pycache__
 migrations
 *.sqlite*
 */*.log
-access.log error.log
+access.log 
+error.log
