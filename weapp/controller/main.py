@@ -39,11 +39,10 @@ async def signature(request):
     elif request.method == 'POST':
         request_msg = parse_message(request.body)
         print('>>>', request.body, request_msg)
-        request_msg_type = request_msg.get('MsgType')
-        xml = ''
+        request_msg_type = request_msg.type
         reply = ''
         if request_msg_type == 'text':
-            reply = TextReply(content='text reply', message=request_msg)
+            reply = TextReply(content='你所发的是文本:{}'.format(request_msg.content), message=request_msg)
         if request_msg_type == 'image':
             reply = ImageReply(message=request_msg)
             reply.media_id = 'image media id'
