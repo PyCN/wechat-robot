@@ -10,8 +10,6 @@ from wechatpy.exceptions import InvalidSignatureException
 from wechatpy.replies import TextReply, ImageReply, VoiceReply
 from wechatpy.utils import check_signature
 
-import logging
-
 bp = Blueprint('main', __name__)
 
 
@@ -42,7 +40,7 @@ async def signature(request):
         if len(request.body) == 0:
             return text('')
         request_msg = parse_message(request.body)
-        logging.info('>>>',request.body)
+        print('>>>', request.body)
         request_msg_type = request_msg.type
         reply = ''
         if request_msg_type == 'text':

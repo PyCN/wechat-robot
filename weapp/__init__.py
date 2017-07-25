@@ -17,7 +17,7 @@ def create_app(config_name):
     register_blueprint(app)
 
     # error handle
-    #register_error_handle(app)
+    # register_error_handle(app)
     return app
 
 
