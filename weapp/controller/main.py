@@ -40,8 +40,8 @@ async def signature(request):
         if len(request.body) == 0:
             return text('')
         request_msg = parse_message(request.body)
-        print('>>>', request.body)
         request_msg_type = request_msg.type
+        print('>>>', request.body, request_msg)
         reply = ''
         if request_msg_type == 'text':
             reply = TextReply(content='你所发的是文本:{}'.format(request_msg.content), message=request_msg)
