@@ -19,7 +19,7 @@ async def index(request):
     return text('hello, world')
 
 
-@bp.route('/sign', methods=['GET', 'POST'])
+@bp.route('/interface', methods=['GET', 'POST'])
 async def signature(request):
     token = request.raw_args.get('token')
     signature = request.raw_args.get('signature')
