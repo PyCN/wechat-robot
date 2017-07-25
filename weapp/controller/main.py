@@ -22,7 +22,7 @@ async def interface(request):
     return json({"received": True, "message": request.json})
 
 
-@bp.route('/sign', methods=['GET'])
+@bp.route('/sign', methods=['GET', 'POST'])
 async def signature(request):
     token = request.raw_args.get('token')
     signature = request.raw_args.get('signature')
@@ -30,6 +30,7 @@ async def signature(request):
     nonce = request.raw_args.get('nonce')
     echostr = request.raw_args.get('echostr')
 
+    print('>>>', request.body)
     try:
         check_signature(token, signature, timestamp, nonce)
     except InvalidSignatureException:
