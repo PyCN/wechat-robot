@@ -13,7 +13,7 @@ class Config(object):
 
 
 class DevConfig(Config):
-    DEBUG = True
+    SANIC_DEBUG = True
 
     def __init__(self):
         print('>>> current config: dev')
@@ -22,6 +22,8 @@ class DevConfig(Config):
 
 
 class PrdConfig(Config):
+    SANIC_DEBUG = False
+
     def __init__(self):
         print('>>> current config: prd')
 
