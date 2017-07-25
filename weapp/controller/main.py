@@ -21,7 +21,7 @@ async def index(request):
 
 
 @bp.route('/interface', methods=['GET', 'POST'])
-async def signature(request):
+async def interface(request):
     # get var from config file
     token = request.app.config.get('WECHAT_TOKEN', None)
     encoding_aes_key = request.app.config.get('WECHAT_ENCODING_AES_KEY', None)
@@ -71,8 +71,10 @@ async def signature(request):
             request_msg_type = request_msg.type
             log.info('>>> request.body[{}],request_msg_type[{}],request_msg[{}]'.format(request.body, request_msg_type,
                                                                                         request_msg))
+            # 根据消息类型解析
             if request_msg_type == 'text':
-                reply = TextReply(content='你所发的是文本:{}'.format(request_msg.content), message=request_msg)
+                # reply = TextReply(content='你所发的是文本:{}'.format(request_msg.content), message=request_msg)
+                reply = text_reply(request_msg.content, request_msg)
             elif request_msg_type == 'image':
                 reply = ImageReply(message=request_msg)
                 reply.media_id = request_msg.media_id
@@ -85,3 +87,18 @@ async def signature(request):
             # 返回xml报文
             xml = reply.render()
             return text(xml)
+
+
+def text_reply(text, req_msg):
+    do_type = text[:2]
+    if do_type == '翻译':
+        resp = translate_text(text[2:])
+    else:
+        resp = 'else'
+    return TextReply(content=resp, message=req_msg)
+
+
+def translate_text(text):
+    from translate import Translator
+    translator = Translator(to_lang="en")
+    return translator.translate(text)
