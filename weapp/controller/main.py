@@ -100,5 +100,5 @@ def text_reply(text, req_msg):
 
 def translate_text(text):
     from translate import Translator
-    translator = Translator(to_lang="en")
+    translator = Translator(from_lang='zh', to_lang="en")
     return translator.translate(text)
