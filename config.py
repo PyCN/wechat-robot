@@ -14,10 +14,17 @@ class Config(object):
 
 class DevConfig(Config):
     DEBUG = True
+
+    def __init__(self):
+        print('>>> current config: dev')
+
     pass
 
 
 class PrdConfig(Config):
+    def __init__(self):
+        print('>>> current config: prd')
+
     pass
 
 
