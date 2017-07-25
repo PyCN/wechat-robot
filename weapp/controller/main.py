@@ -7,7 +7,7 @@ from sanic import Blueprint
 from sanic.response import text
 from wechatpy import parse_message
 from wechatpy.exceptions import InvalidSignatureException
-from wechatpy.replies import TextReply, ImageReply, VoiceReply
+from wechatpy.replies import TextReply, ImageReply, VoiceReply, EmptyReply
 from wechatpy.utils import check_signature
 
 bp = Blueprint('main', __name__)
@@ -45,15 +45,15 @@ async def signature(request):
         reply = ''
         if request_msg_type == 'text':
             reply = TextReply(content='你所发的是文本:{}'.format(request_msg.content), message=request_msg)
-        if request_msg_type == 'image':
+        elif request_msg_type == 'image':
             reply = ImageReply(message=request_msg)
             reply.media_id = request_msg.media_id
-        if request_msg_type == 'voice':
+        elif request_msg_type == 'voice':
             reply = VoiceReply(message=request_msg)
             reply.media_id = request_msg.media_id
+        else:
+            reply = EmptyReply()
 
         # 返回xml报文
         xml = reply.render()
         return text(xml)
-
-    return text('')
