@@ -4,22 +4,18 @@
 __author__ = 'yueyt'
 
 from sanic import Blueprint
-from sanic.response import json, text
-
+from sanic.response import text
+from wechatpy import parse_message
 from wechatpy.exceptions import InvalidSignatureException
 from wechatpy.utils import check_signature
 
 bp = Blueprint('main', __name__)
 
 
-@bp.route('/')
+@bp.route('/', methods=['GET', 'POST'])
 async def index(request):
+    print('>>>', request.method)
     return text('hello, world')
-
-
-@bp.route('/interface')
-async def interface(request):
-    return json({"received": True, "message": request.json})
 
 
 @bp.route('/sign', methods=['GET', 'POST'])
@@ -29,13 +25,17 @@ async def signature(request):
     timestamp = request.raw_args.get('timestamp')
     nonce = request.raw_args.get('nonce')
     echostr = request.raw_args.get('echostr')
-
-    print('>>>', request.body)
-    try:
-        check_signature(token, signature, timestamp, nonce)
-    except InvalidSignatureException:
-        # 处理异常情况或忽略
-        print('>>>', request.raw_args, '验证异常')
-        return text('验证异常')
-    else:
-        return text(echostr)
+    print('>>>')
+    if request.method == 'GET':
+        try:
+            check_signature(token, signature, timestamp, nonce)
+        except InvalidSignatureException:
+            # 处理异常情况或忽略
+            print('>>>', request.raw_args, '验证异常')
+            return text('验证异常')
+        else:
+            return text(echostr)
+    elif request.method == 'POST':
+        print('>>>', request.body)
+        msg = parse_message(request.body)
+        print('>>>>>', msg)
