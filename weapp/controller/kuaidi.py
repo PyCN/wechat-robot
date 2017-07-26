@@ -29,6 +29,7 @@ USER_AGENTS = [
 
 class KuaiDi(object):
     def __init__(self):
+
         self.request_header = {
             'Connection': 'keep-alive',
             'Pragma': 'no-cache',
@@ -42,9 +43,10 @@ class KuaiDi(object):
             'Host': 'www.kuaidi100.com',
             'Origin': 'https://www.kuaidi100.com'
         }
+        self.s = requests.session()
 
     def _get_kuaidi_comcode(self, postid):
-        rsp = requests.get(url='https://www.kuaidi100.com/autonumber/autoComNum?text=' + postid,
+        rsp = self.s.get(url='https://www.kuaidi100.com/autonumber/autoComNum?text=' + postid,
                            headers=self.request_header)
         rsp_json = rsp.json()
         auto = rsp_json.get('auto', '')
@@ -59,7 +61,7 @@ class KuaiDi(object):
         comcode = self._get_kuaidi_comcode(postid)
         if len(comcode) == 0:
             return '亲，没有查询到对应的单号信息，请去官网上查询。。。'
-        rsp = requests.post('http://www.kuaidi100.com/query?type=' + comcode + '&postid=' + postid,
+        rsp = self.s.post('http://www.kuaidi100.com/query?type=' + comcode + '&postid=' + postid,
                             headers=self.request_header)
         rsp_json = rsp.json()
         outcome = ''
