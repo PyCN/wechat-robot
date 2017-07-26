@@ -84,6 +84,9 @@ async def interface(request):
             elif request_msg_type == 'voice':
                 reply = VoiceReply(message=request_msg)
                 reply.media_id = request_msg.media_id
+            elif request_msg_type == 'event':
+                print('>>>'*30)
+                reply = TextReply(content='多谢关注！', message=request_msg)
             else:
                 reply = EmptyReply()
 
