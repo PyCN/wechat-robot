@@ -85,7 +85,7 @@ async def interface(request):
                 reply = VoiceReply(message=request_msg)
                 reply.media_id = request_msg.media_id
             elif request_msg_type == 'event':
-                request_msg_event = request_msg.get('event', '')
+                request_msg_event = request_msg.event
                 if request_msg_event == 'subscribe':
                     reply = TextReply(content=request.app.config.get('WELCOME_MSG'), message=request_msg)
                 elif request_msg_event == 'unsubscribe':
