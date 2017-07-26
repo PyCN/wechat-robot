@@ -48,11 +48,12 @@ class KuaiDi(object):
                            headers=self.request_header)
         rsp_json = rsp.json()
         auto = rsp_json.get('auto', '')
-        if isinstance(auto, list):
-            if isinstance(auto[0], dict):
-                return auto[0].get('comCode', '')
-        else:
+        try:
+            comcode = auto[0].get('comCode', '')
+        except IndexError:
             return ''
+        else:
+            return comcode
 
     def get_kuaidi(self, postid):
         comcode = self._get_kuaidi_comcode(postid)
