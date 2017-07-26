@@ -12,6 +12,8 @@ from wechatpy.exceptions import InvalidSignatureException, InvalidAppIdException
 from wechatpy.replies import TextReply, ImageReply, VoiceReply, EmptyReply
 from wechatpy.utils import check_signature
 
+from .kuaidi import KuaiDi
+
 bp = Blueprint('main', __name__)
 
 
@@ -109,4 +111,5 @@ def text_translate(text):
 
 
 def text_kuaidi(text):
-    pass
+    kd = KuaiDi()
+    return kd.get_kuaidi(text)
