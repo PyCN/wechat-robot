@@ -44,12 +44,19 @@ class KuaiDi(object):
         }
 
     def _get_kuaidi_comcode(self, postid):
-        r = requests.get(url='https://www.kuaidi100.com/autonumber/autoComNum?text=' + postid,
-                         headers=self.request_header)
-        return r.json()["auto"][0]['comCode']
+        rsp = requests.get(url='https://www.kuaidi100.com/autonumber/autoComNum?text=' + postid,
+                           headers=self.request_header)
+        rsp_json = rsp.json()
+        auto = rsp_json.get('auto', '')
+        if isinstance(auto, list) and isinstance(auto[0].get('comCode')):
+            return auto[0].get('comCode')
+        else:
+            return ''
 
     def get_kuaidi(self, postid):
         comcode = self._get_kuaidi_comcode(postid)
+        if len(comcode) == 0:
+            return '亲，没有查询到对应的单号信息，请去官网上查询。。。'
         rsp = requests.post('http://www.kuaidi100.com/query?type=' + comcode + '&postid=' + postid,
                             headers=self.request_header)
         rsp_json = rsp.json()
