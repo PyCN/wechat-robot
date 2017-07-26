@@ -48,8 +48,9 @@ class KuaiDi(object):
                            headers=self.request_header)
         rsp_json = rsp.json()
         auto = rsp_json.get('auto', '')
-        if isinstance(auto, list) and isinstance(auto[0].get('comCode')):
-            return auto[0].get('comCode')
+        if isinstance(auto, list):
+            if isinstance(auto[0], dict):
+                return auto[0].get('comCode', '')
         else:
             return ''
 
