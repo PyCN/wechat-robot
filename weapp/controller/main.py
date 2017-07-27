@@ -65,39 +65,57 @@ async def interface(request):
                     )
                 except (InvalidAppIdException, InvalidSignatureException):
                     # to-do: 处理异常或忽略
+                    log.error('>>> 加密处理异常')
                     return response.text('')
                 else:
-                    request_msg = parse_message(decrypted_xml)
+                    return response.text(get_reply_message(request, decrypted_xml, mode='aes'))
             else:
                 # 纯文本方式
-                request_msg = parse_message(request.body)
+                return response.text(get_reply_message(request, request.body))
 
-            request_msg_type = request_msg.type
-            log.info('>>> request.body[{}],request_msg_type[{}],request_msg[{}]'.format(request.body, request_msg_type,
-                                                                                        request_msg))
-            # 根据消息类型解析
-            if request_msg_type == 'text':
-                reply = text_reply(request_msg.content, request_msg)
-            elif request_msg_type == 'image':
-                reply = ImageReply(message=request_msg)
-                reply.media_id = request_msg.media_id
-            elif request_msg_type == 'voice':
-                reply = VoiceReply(message=request_msg)
-                reply.media_id = request_msg.media_id
-            elif request_msg_type == 'event':
-                request_msg_event = request_msg.event
-                if request_msg_event == 'subscribe':
-                    reply = TextReply(content=request.app.config.get('WELCOME_MSG'), message=request_msg)
-                elif request_msg_event == 'unsubscribe':
-                    reply = TextReply(content='多谢关注！', message=request_msg)
-                else:
-                    reply = EmptyReply()
-            else:
-                reply = EmptyReply()
 
-            # 返回xml报文
-            xml = reply.render()
-            return response.text(xml)
+def get_reply_message(request, source_msg, mode=None):
+    request_msg = parse_message(source_msg)
+    request_msg_type = request_msg.type
+    log.info('>>> body[{}],request_msg_type[{}],request_msg[{}]'.format(request.body, request_msg_type, request_msg))
+    # 根据消息类型解析
+    if request_msg_type == 'text':
+        reply = text_reply(request_msg.content, request_msg)
+    elif request_msg_type == 'image':
+        reply = ImageReply(message=request_msg)
+        reply.media_id = request_msg.media_id
+    elif request_msg_type == 'voice':
+        reply = VoiceReply(message=request_msg)
+        reply.media_id = request_msg.media_id
+    elif request_msg_type == 'event':
+        request_msg_event = request_msg.event
+        if request_msg_event == 'subscribe':
+            reply = TextReply(content=request.app.config.get('WELCOME_MSG'), message=request_msg)
+        elif request_msg_event == 'unsubscribe':
+            reply = TextReply(content='多谢关注！', message=request_msg)
+        else:
+            reply = EmptyReply()
+    else:
+        reply = EmptyReply()
+
+    # 返回xml报文
+    xml = reply.render()
+
+    if mode == 'aes':
+        # get var from config file
+        token = request.app.config.get('WECHAT_TOKEN', None)
+        encoding_aes_key = request.app.config.get('WECHAT_ENCODING_AES_KEY', None)
+        appid = request.app.config.get('WECHAT_APPID', None)
+
+        timestamp = request.raw_args.get('timestamp', '')
+        nonce = request.raw_args.get('nonce', '')
+
+        crypto = WeChatCrypto(token, encoding_aes_key, appid)
+        encrypted_xml = crypto.encrypt_message(xml, nonce, timestamp)
+        return encrypted_xml
+    else:
+
+        return xml
 
 
 def text_reply(text, req_msg):
