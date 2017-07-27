@@ -46,8 +46,12 @@ class KuaiDi(object):
         self.s = requests.session()
 
     def _get_kuaidi_comcode(self, postid):
-        rsp = self.s.get(url='https://www.kuaidi100.com/autonumber/autoComNum?text=' + postid,
-                           headers=self.request_header)
+        try:
+            rsp = self.s.get(url='https://www.kuaidi100.com/autonumber/autoComNum?text=' + postid,
+                             headers=self.request_header, timeout=30)
+        except requests.ConnectTimeout:
+            return ''
+
         rsp_json = rsp.json()
         auto = rsp_json.get('auto', '')
         try:
@@ -61,8 +65,11 @@ class KuaiDi(object):
         comcode = self._get_kuaidi_comcode(postid)
         if len(comcode) == 0:
             return '亲，没有查询到对应的单号信息，请去官网上查询。。。'
-        rsp = self.s.post('http://www.kuaidi100.com/query?type=' + comcode + '&postid=' + postid,
-                            headers=self.request_header)
+        try:
+            rsp = self.s.post('http://www.kuaidi100.com/query?type=' + comcode + '&postid=' + postid,
+                              headers=self.request_header, timeout=30)
+        except requests.ConnectTimeout:
+            return ''
         rsp_json = rsp.json()
         outcome = ''
         for c in rsp_json['data']:

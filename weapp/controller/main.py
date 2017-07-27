@@ -68,19 +68,19 @@ async def interface(request):
                     log.error('>>> 加密处理异常')
                     return response.text('')
                 else:
-                    return response.text(get_reply_message(request, decrypted_xml, mode='aes'))
+                    return response.text(get_resp_message(request, decrypted_xml, mode='aes'))
             else:
                 # 纯文本方式
-                return response.text(get_reply_message(request, request.body))
+                return response.text(get_resp_message(request, request.body))
 
 
-def get_reply_message(request, source_msg, mode=None):
+def get_resp_message(request, source_msg, mode=None):
     request_msg = parse_message(source_msg)
     request_msg_type = request_msg.type
     log.info('>>> body[{}],request_msg_type[{}],request_msg[{}]'.format(request.body, request_msg_type, request_msg))
     # 根据消息类型解析
     if request_msg_type == 'text':
-        reply = text_reply(request_msg.content, request_msg)
+        reply = get_text_reply(request_msg.content, request_msg)
     elif request_msg_type == 'image':
         reply = ImageReply(message=request_msg)
         reply.media_id = request_msg.media_id
@@ -114,16 +114,17 @@ def get_reply_message(request, source_msg, mode=None):
         encrypted_xml = crypto.encrypt_message(xml, nonce, timestamp)
         return encrypted_xml
     else:
-
         return xml
 
 
-def text_reply(text, req_msg):
+def get_text_reply(text, req_msg):
     do_type = text[:2]
     if do_type == '翻译' or do_type == 'fy':
         resp = text_translate(text[2:])
     elif do_type == '快递' or do_type == 'kd':
         resp = text_kuaidi(text[2:])
+        if not resp:
+            resp = 'ooo, 不明白你的意思!'
     else:
         resp = 'ooo, 不明白你的意思!'
     return TextReply(content='{}'.format(resp), message=req_msg)
