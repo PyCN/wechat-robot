@@ -83,7 +83,7 @@ def get_resp_message(request, source_msg, mode=None):
     log.info('>>> body[{}],request_msg_type[{}],request_msg[{}]'.format(request.body, request_msg_type, request_msg))
     # 根据消息类型解析
     if request_msg_type == 'text':
-        reply = TextReply(content='{}'.format(get_text_reply(request_msg.content)), message=request_msg)
+        reply = TextReply(content='{}'.format(get_text_reply(request, request_msg.content)), message=request_msg)
     elif request_msg_type == 'image':
         reply = ImageReply(message=request_msg)
         reply.media_id = request_msg.media_id
@@ -120,16 +120,18 @@ def get_resp_message(request, source_msg, mode=None):
         return xml
 
 
-def get_text_reply(text):
+def get_text_reply(request, text):
+    openid = request.raw_args.get('openid', '')
     do_type = text[:2]
     if do_type == '翻译' or do_type == 'fy':
         resp = text_translate(text[2:])
     elif do_type == '快递' or do_type == 'kd':
         resp = text_kuaidi(text[2:])
         if not resp:
-            resp = 'ooo, 你输入的快递没有查到，请到官网查询试试!'
+            # resp = 'ooo, 你输入的快递没有查到，请到官网查询试试!'
+            resp = text_tuling(text, openid)
     else:
-        resp = text_tuling(text)
+        resp = text_tuling(text, openid)
     return resp
 
 
@@ -145,21 +147,21 @@ def text_kuaidi(text):
     return kd.get_kuaidi(text)
 
 
-def text_tuling(text):
+def text_tuling(text, userid):
     if len(text) == 0:
         return '请输入正确的文本'
     api_url = 'http://www.tuling123.com/openapi/api'
     TULING_APIKEY = os.environ.get('TULING_APIKEY') or '123'
-    data = {"key": TULING_APIKEY, "info": text, "userid": '123'}
+    data = {"key": TULING_APIKEY, "info": text, "userid": userid}
 
     r = requests.post(api_url, data=data)
     if r.status_code == 200:
         rsp = json.loads(r.text)
         tuling_text = rsp.get('text')
         tuling_url = rsp.get('url', '')
+        print('>>>', r.text)
         if tuling_url:
             return ':'.join([tuling_text, tuling_url])
-
         else:
             return tuling_text
 
@@ -167,4 +169,4 @@ def text_tuling(text):
 
 
 if __name__ == '__main__':
-    print(text_tuling('今天上海到北京的航班'))
+    print(text_tuling('今日新闻'))
