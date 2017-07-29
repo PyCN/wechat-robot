@@ -147,7 +147,7 @@ def text_kuaidi(text):
     return kd.get_kuaidi(text)
 
 
-def text_tuling(text, userid):
+def text_tuling(text, userid=None):
     if len(text) == 0:
         return '请输入正确的文本'
     api_url = 'http://www.tuling123.com/openapi/api'
