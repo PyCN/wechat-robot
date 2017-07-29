@@ -2,7 +2,10 @@
 # coding: utf-8
 
 __author__ = 'yueyt'
+import json
+import os
 
+import requests
 from sanic import Blueprint, response
 from sanic.log import log, netlog
 from translate import Translator
@@ -12,7 +15,7 @@ from wechatpy.exceptions import InvalidSignatureException, InvalidAppIdException
 from wechatpy.replies import TextReply, ImageReply, VoiceReply, EmptyReply
 from wechatpy.utils import check_signature
 
-from .kuaidi import KuaiDi
+from weapp.controller.kuaidi import KuaiDi
 
 bp = Blueprint('main', __name__)
 
@@ -124,9 +127,9 @@ def get_text_reply(text):
     elif do_type == '快递' or do_type == 'kd':
         resp = text_kuaidi(text[2:])
         if not resp:
-            resp = 'ooo, 不明白你的意思!'
+            resp = 'ooo, 你输入的快递没有查到，请到官网查询试试!'
     else:
-        resp = 'ooo, 不明白你的意思!'
+        resp = text_tuling(text)
     return resp
 
 
@@ -140,3 +143,23 @@ def text_translate(text):
 def text_kuaidi(text):
     kd = KuaiDi()
     return kd.get_kuaidi(text)
+
+
+def text_tuling(text):
+    if len(text) == 0:
+        return '请输入正确的文本'
+    api_url = 'http://www.tuling123.com/openapi/api'
+    TULING_APIKEY = os.environ.get('TULING_APIKEY') or '123'
+    data = {"key": TULING_APIKEY, "info": text}
+
+    r = requests.post(api_url, data=data)
+    if r.status_code == 200:
+        rsp = json.loads(r.text)
+        tuling_text = rsp.get('text')
+        return tuling_text
+
+    return '请输入正确的文本'
+
+
+if __name__ == '__main__':
+    print(text_tuling('你是谁？'))

@@ -16,7 +16,6 @@ class Config(object):
     WELCOME_MSG = '''
      欢迎使用wechat-robot,你可以试试如下命令：
      快递 XXX
-     天气 XXX
      翻译 XXX
      ...
      如：
@@ -24,6 +23,7 @@ class Config(object):
      翻译 我是谁？
      要查询快递：12345678，请输入：
      快递 12345678
+     你是谁？等等
     '''
 
     @classmethod
