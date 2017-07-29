@@ -51,8 +51,6 @@ def howold(picurl):
 
 
 if __name__ == '__main__':
-    # picurl = 'http://mmbiz.qpic.cn/mmbiz_jpg/YnxvCtAax45Cia7rziaCAVW7j32V3iaDaGYBULUqtHGAic4CJE3RQUkAibstOKC1tyeibicfKuxlrfjQehEqg0IN2qg3g/0'
-    # picurl = 'http://mmbiz.qpic.cn/mmbiz_jpg/YnxvCtAax45Cia7rziaCAVW7j32V3iaDaGYzelPkSeK9iaXEahiaxdWLuRPtc7fiabdynEJjd3X9sB4DraY8tkEzR0fg/0'
-    picurl = 'http://mmbiz.qpic.cn/mmbiz_jpg/YnxvCtAax45Cia7rziaCAVW7j32V3iaDaGY4whLPz6Fe9IA00OW5awHG1Zhz1iczcWM3Lr3Mbd0ZGVACMXLBbdq7wQ/0'
+    picurl = ''
     res = howold(picurl)
     print(res)
