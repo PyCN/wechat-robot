@@ -2,7 +2,6 @@
 # coding: utf-8
 
 __author__ = 'yueyt'
-import json
 import os
 
 import requests
@@ -12,9 +11,10 @@ from translate import Translator
 from wechatpy import parse_message
 from wechatpy.crypto import WeChatCrypto
 from wechatpy.exceptions import InvalidSignatureException, InvalidAppIdException
-from wechatpy.replies import TextReply, ImageReply, EmptyReply
+from wechatpy.replies import TextReply, EmptyReply
 from wechatpy.utils import check_signature
 
+from weapp.controller.howold import howold
 from weapp.controller.kuaidi import KuaiDi
 
 bp = Blueprint('main', __name__)
@@ -85,8 +85,9 @@ def get_resp_message(request, source_msg, mode=None):
     if request_msg_type == 'text':
         reply = TextReply(content='{}'.format(get_text_reply(request, request_msg.content)), message=request_msg)
     elif request_msg_type == 'image':
-        reply = ImageReply(message=request_msg)
-        reply.media_id = request_msg.media_id
+        # reply = ImageReply(message=request_msg)
+        # reply.media_id = request_msg.media_id
+        reply = TextReply(content=howold(request_msg.image), message=request_msg)
     elif request_msg_type == 'voice':
         if not request_msg.recognition:
             reply = TextReply(content='没听清楚啊，再说一遍，亲', message=request_msg)
@@ -172,4 +173,5 @@ def text_tuling(text, userid=None):
 
 
 if __name__ == '__main__':
-    print(text_tuling('今日新闻'))
+    # print(text_tuling('今日新闻'))
+    pass
