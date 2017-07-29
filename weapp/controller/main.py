@@ -150,7 +150,7 @@ def text_tuling(text):
         return '请输入正确的文本'
     api_url = 'http://www.tuling123.com/openapi/api'
     TULING_APIKEY = os.environ.get('TULING_APIKEY') or '123'
-    data = {"key": TULING_APIKEY, "info": text}
+    data = {"key": TULING_APIKEY, "info": text, "userid": '123'}
 
     r = requests.post(api_url, data=data)
     if r.status_code == 200:
