@@ -156,10 +156,15 @@ def text_tuling(text):
     if r.status_code == 200:
         rsp = json.loads(r.text)
         tuling_text = rsp.get('text')
-        return tuling_text
+        tuling_url = rsp.get('url', '')
+        if tuling_url:
+            return ':'.join([tuling_text, tuling_url])
+
+        else:
+            return tuling_text
 
     return '请输入正确的文本'
 
 
 if __name__ == '__main__':
-    print(text_tuling('你是谁？'))
+    print(text_tuling('今天上海到北京的航班'))
