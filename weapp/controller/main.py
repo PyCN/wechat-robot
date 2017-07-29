@@ -80,7 +80,7 @@ def get_resp_message(request, source_msg, mode=None):
     log.info('>>> body[{}],request_msg_type[{}],request_msg[{}]'.format(request.body, request_msg_type, request_msg))
     # 根据消息类型解析
     if request_msg_type == 'text':
-        reply = get_text_reply(request_msg.content, request_msg)
+        reply = TextReply(content='{}'.format(get_text_reply(request_msg.content)), message=request_msg)
     elif request_msg_type == 'image':
         reply = ImageReply(message=request_msg)
         reply.media_id = request_msg.media_id
@@ -117,7 +117,7 @@ def get_resp_message(request, source_msg, mode=None):
         return xml
 
 
-def get_text_reply(text, req_msg):
+def get_text_reply(text):
     do_type = text[:2]
     if do_type == '翻译' or do_type == 'fy':
         resp = text_translate(text[2:])
@@ -127,7 +127,7 @@ def get_text_reply(text, req_msg):
             resp = 'ooo, 不明白你的意思!'
     else:
         resp = 'ooo, 不明白你的意思!'
-    return TextReply(content='{}'.format(resp), message=req_msg)
+    return resp
 
 
 def text_translate(text):
