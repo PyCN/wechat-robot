@@ -14,16 +14,11 @@ class Config(object):
     WECHAT_APPID = os.environ.get('WECHAT_APPID') or 'hard to guess string'
 
     WELCOME_MSG = '''
-     欢迎使用wechat-robot,你可以试试如下命令：
-     快递/翻译 XXX
-     如：
-     要翻译：我是谁？，请输入： 
-     翻译 我是谁？
-     要查询快递：12345678，请输入：
-     快递 12345678
+     能聊天，能识别图片人物年龄，
+     能解析语音，能讲笑话
+     上知天文下知地理，学富五车才高八斗
      --------------------------
-     你也可以直接输入进行愉快的聊天：
-     讲个笑话
+     来来来，帮你排忧解难。。。
     '''
 
     @classmethod
