@@ -38,6 +38,9 @@ def howold(picurl):
     result = []
     for i in json.loads(AnalyticsEvent):
         face = i.get('face')
+        if not face:
+            continue
+
         age = face.get('age', '不知道多大')
 
         # update
