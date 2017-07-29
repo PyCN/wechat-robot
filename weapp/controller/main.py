@@ -12,7 +12,7 @@ from translate import Translator
 from wechatpy import parse_message
 from wechatpy.crypto import WeChatCrypto
 from wechatpy.exceptions import InvalidSignatureException, InvalidAppIdException
-from wechatpy.replies import TextReply, ImageReply, VoiceReply, EmptyReply
+from wechatpy.replies import TextReply, ImageReply, EmptyReply
 from wechatpy.utils import check_signature
 
 from weapp.controller.kuaidi import KuaiDi
@@ -88,8 +88,7 @@ def get_resp_message(request, source_msg, mode=None):
         reply = ImageReply(message=request_msg)
         reply.media_id = request_msg.media_id
     elif request_msg_type == 'voice':
-        reply = VoiceReply(message=request_msg)
-        reply.media_id = request_msg.media_id
+        reply = TextReply(content='{}'.format(get_text_reply(request, request_msg.recognition)), message=request_msg)
     elif request_msg_type == 'event':
         request_msg_event = request_msg.event
         if request_msg_event == 'subscribe':
