@@ -93,8 +93,8 @@ def get_resp_message(request, source_msg, mode=None):
         if not request_msg.recognition:
             reply = TextReply(content='没听清楚啊，再说一遍，亲', message=request_msg)
         else:
-            reply = TextReply(content='{}'.format(get_text_reply(request, request_msg.recognition)),
-                              message=request_msg)
+            content = get_text_reply(request, request_msg.recognition)
+            reply = TextReply(content='{}'.format(content), message=request_msg)
     elif request_msg_type == 'event':
         request_msg_event = request_msg.event
         if request_msg_event == 'subscribe':
