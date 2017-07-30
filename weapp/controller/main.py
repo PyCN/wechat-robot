@@ -91,19 +91,20 @@ def get_resp_message(request, source_msg, mode=None):
             reply = TextReply(content='没听清楚啊，再说一遍，亲', message=request_msg)
         else:
             content = get_text_reply(request, request_msg.recognition)
-            tts = gTTS(text=content, lang='zh-cn')
-            tmpfd, tempfilename = tempfile.mkstemp()
-            tts.save(tempfilename)
-            with open(tempfilename, mode='rb') as f:
-                client = WeChatClient(config.WECHAT_APPID, config.WECHAT_SECRET)
-                res = WeChatMedia(client=client).upload('voice', f.read())
-                print('>>>', res)
-                media_id = json.loads(res).get('media_id')
-                if not media_id:
-                    reply = VideoReply(message=request_msg)
-                    reply.media_id = media_id
-                else:
-                    reply = TextReply(content='{}'.format(content), message=request_msg)
+            # tts = gTTS(text=content, lang='zh-cn')
+            # tmpfd, tempfilename = tempfile.mkstemp()
+            # tts.save(tempfilename)
+            # with open(tempfilename, mode='rb') as f:
+            #     client = WeChatClient(config.WECHAT_APPID, config.WECHAT_SECRET)
+            #     res = WeChatMedia(client=client).upload('voice', f.read())
+            #     print('>>>', res)
+            #     media_id = json.loads(res).get('media_id')
+            #     if not media_id:
+            #         reply = VideoReply(message=request_msg)
+            #         reply.media_id = media_id
+            #     else:
+            #         reply = TextReply(content='{}'.format(content), message=request_msg)
+            reply = TextReply(content='{}'.format(content), message=request_msg)
     elif request_msg_type == 'event':
         request_msg_event = request_msg.event
         if request_msg_event == 'subscribe':
@@ -179,4 +180,7 @@ def text_tuling(text, userid=None):
 
 if __name__ == '__main__':
     # print(text_tuling('今日新闻'))
-    pass
+    client = WeChatClient(config.WECHAT_APPID, config.WECHAT_SECRET)
+    res = WeChatMedia(client=client).upload('voice', f.read())
+    print('>>>', res)
+    media_id = json.loads(res).get('media_id')
