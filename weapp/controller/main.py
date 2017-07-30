@@ -6,6 +6,7 @@ import json
 import os
 
 import requests
+from gtts import gTTS
 from sanic import Blueprint, response
 from sanic.log import log, netlog
 from translate import Translator
@@ -15,6 +16,7 @@ from wechatpy.exceptions import InvalidSignatureException, InvalidAppIdException
 from wechatpy.replies import TextReply, EmptyReply
 from wechatpy.utils import check_signature
 
+import config
 from weapp.controller.howold import howold
 from weapp.controller.kuaidi import KuaiDi
 
@@ -28,11 +30,6 @@ async def index(request):
 
 @bp.route('/interface', methods=['GET', 'POST'])
 async def interface(request):
-    # get var from config file
-    token = request.app.config.get('WECHAT_TOKEN', None)
-    encoding_aes_key = request.app.config.get('WECHAT_ENCODING_AES_KEY', None)
-    appid = request.app.config.get('WECHAT_APPID', None)
-
     # get var from request args
     signature = request.raw_args.get('signature', '')
     timestamp = request.raw_args.get('timestamp', '')
@@ -42,7 +39,7 @@ async def interface(request):
     encrypt_type = request.raw_args.get('encrypt_type', '')
 
     try:
-        check_signature(token, signature, timestamp, nonce)
+        check_signature(config.WECHAT_TOKEN, signature, timestamp, nonce)
     except InvalidSignatureException:
         # 处理异常情况或忽略
         netlog.error('>>> {},{}'.format(request.raw_args, '验证异常'))
@@ -59,7 +56,7 @@ async def interface(request):
 
             # 加密方式
             if encrypt_type == 'aes':
-                crypto = WeChatCrypto(token, encoding_aes_key, appid)
+                crypto = WeChatCrypto(config.WECHAT_TOKEN, config.WECHAT_ENCODING_AES_KEY, config.WECHAT_APPID)
                 try:
                     decrypted_xml = crypto.decrypt_message(
                         request.body,
@@ -94,6 +91,9 @@ def get_resp_message(request, source_msg, mode=None):
             reply = TextReply(content='没听清楚啊，再说一遍，亲', message=request_msg)
         else:
             content = get_text_reply(request, request_msg.recognition)
+            tts = gTTS(text=content, lang='zh-cn')
+            tts.save(os.path.join(config.SPEECH_DATA_DIR, 'good.mp3'))
+
             reply = TextReply(content='{}'.format(content), message=request_msg)
     elif request_msg_type == 'event':
         request_msg_event = request_msg.event
@@ -110,15 +110,11 @@ def get_resp_message(request, source_msg, mode=None):
     xml = reply.render()
 
     if mode == 'aes':
-        # get var from config file
-        token = request.app.config.get('WECHAT_TOKEN', None)
-        encoding_aes_key = request.app.config.get('WECHAT_ENCODING_AES_KEY', None)
-        appid = request.app.config.get('WECHAT_APPID', None)
-
+        # get var
         timestamp = request.raw_args.get('timestamp', '')
         nonce = request.raw_args.get('nonce', '')
 
-        crypto = WeChatCrypto(token, encoding_aes_key, appid)
+        crypto = WeChatCrypto(config.WECHAT_TOKEN, config.WECHAT_ENCODING_AES_KEY, config.WECHAT_APPID)
         encrypted_xml = crypto.encrypt_message(xml, nonce, timestamp)
         return encrypted_xml
     else:
@@ -156,8 +152,7 @@ def text_tuling(text, userid=None):
     if len(text) == 0:
         return '请输入正确的文本'
     api_url = 'http://www.tuling123.com/openapi/api'
-    TULING_APIKEY = os.environ.get('TULING_APIKEY') or '123'
-    data = {"key": TULING_APIKEY, "info": text, "userid": userid}
+    data = {"key": config.TULING_APIKEY, "info": text, "userid": userid}
 
     r = requests.post(api_url, data=data)
     if r.status_code == 200:
