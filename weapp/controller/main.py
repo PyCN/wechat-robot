@@ -11,6 +11,7 @@ from sanic import Blueprint, response
 from sanic.log import log, netlog
 from translate import Translator
 from wechatpy import parse_message
+from wechatpy.client.api import WeChatMedia
 from wechatpy.crypto import WeChatCrypto
 from wechatpy.exceptions import InvalidSignatureException, InvalidAppIdException
 from wechatpy.replies import TextReply, EmptyReply
@@ -93,6 +94,9 @@ def get_resp_message(request, source_msg, mode=None):
             content = get_text_reply(request, request_msg.recognition)
             tts = gTTS(text=content, lang='zh-cn')
             tts.save(os.path.join(config.SPEECH_DATA_DIR, 'good.mp3'))
+            with open(os.path.join(config.SPEECH_DATA_DIR, 'good.mp3'), mode='rb') as f:
+                res = WeChatMedia().upload('voice', f)
+                print('>>>', res)
 
             reply = TextReply(content='{}'.format(content), message=request_msg)
     elif request_msg_type == 'event':
