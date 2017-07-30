@@ -97,17 +97,17 @@ def get_resp_message(request, source_msg, mode=None):
             with open(tempfilename, mode='rb') as f:
                 client = WeChatClient(config.WECHAT_APPID, config.WECHAT_SECRET)
                 res = WeChatMedia(client=client).upload('voice', f)
+                print('>>>', res)
                 media_id = json.loads(res).get('media_id')
                 if not media_id:
                     reply = VideoReply(message=request_msg)
                     reply.media_id = media_id
-                    return reply
                 else:
                     reply = TextReply(content='{}'.format(content), message=request_msg)
     elif request_msg_type == 'event':
         request_msg_event = request_msg.event
         if request_msg_event == 'subscribe':
-            reply = TextReply(content=request.app.config.get('WELCOME_MSG'), message=request_msg)
+            reply = TextReply(content=config.WELCOME_MSG, message=request_msg)
         elif request_msg_event == 'unsubscribe':
             reply = TextReply(content='多谢关注！', message=request_msg)
         else:
