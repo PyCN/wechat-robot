@@ -3,7 +3,7 @@
 
 __author__ = 'yueyt'
 import json
-import os
+import tempfile
 
 import requests
 from gtts import gTTS
@@ -15,7 +15,7 @@ from wechatpy import parse_message
 from wechatpy.client.api import WeChatMedia
 from wechatpy.crypto import WeChatCrypto
 from wechatpy.exceptions import InvalidSignatureException, InvalidAppIdException
-from wechatpy.replies import TextReply, EmptyReply
+from wechatpy.replies import TextReply, EmptyReply, VideoReply
 from wechatpy.utils import check_signature
 
 import config
@@ -92,14 +92,18 @@ def get_resp_message(request, source_msg, mode=None):
         else:
             content = get_text_reply(request, request_msg.recognition)
             tts = gTTS(text=content, lang='zh-cn')
-            tts.save(os.path.join(config.SPEECH_DATA_DIR, 'good.mp3'))
-            with open(os.path.join(config.SPEECH_DATA_DIR, 'good.mp3'), mode='rb') as f:
+            tmpfd, tempfilename = tempfile.mkstemp()
+            tts.save(tempfilename)
+            with open(tempfilename, mode='rb') as f:
                 client = WeChatClient(config.WECHAT_APPID, config.WECHAT_SECRET)
                 res = WeChatMedia(client=client).upload('voice', f)
-
-                print('>>>', res)
-
-            reply = TextReply(content='{}'.format(content), message=request_msg)
+                media_id = json.loads(res).get('media_id')
+                if not media_id:
+                    reply = VideoReply(message=request_msg)
+                    reply.media_id = media_id
+                    return reply
+                else:
+                    reply = TextReply(content='{}'.format(content), message=request_msg)
     elif request_msg_type == 'event':
         request_msg_event = request_msg.event
         if request_msg_event == 'subscribe':
