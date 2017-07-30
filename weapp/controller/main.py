@@ -96,7 +96,7 @@ def get_resp_message(request, source_msg, mode=None):
             tts.save(tempfilename)
             with open(tempfilename, mode='rb') as f:
                 client = WeChatClient(config.WECHAT_APPID, config.WECHAT_SECRET)
-                res = WeChatMedia(client=client).upload('voice', f)
+                res = WeChatMedia(client=client).upload('voice', f.read())
                 print('>>>', res)
                 media_id = json.loads(res).get('media_id')
                 if not media_id:
