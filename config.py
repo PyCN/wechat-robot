@@ -11,6 +11,7 @@ SPEECH_DATA_DIR = os.path.join(basedir, 'speech_data')
 WECHAT_TOKEN = os.environ.get('WECHAT_TOKEN') or 'hard to guess string'
 WECHAT_ENCODING_AES_KEY = os.environ.get('WECHAT_ENCODING_AES_KEY') or 'hard to guess string'
 WECHAT_APPID = os.environ.get('WECHAT_APPID') or 'hard to guess string'
+WECHAT_SECRET = os.environ.get('WECHAT_SECRET') or 'hard to guess string'
 
 TULING_APIKEY = os.environ.get('TULING_APIKEY') or '123'
 

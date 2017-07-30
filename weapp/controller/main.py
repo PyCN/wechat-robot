@@ -10,6 +10,7 @@ from gtts import gTTS
 from sanic import Blueprint, response
 from sanic.log import log, netlog
 from translate import Translator
+from wechatpy import WeChatClient
 from wechatpy import parse_message
 from wechatpy.client.api import WeChatMedia
 from wechatpy.crypto import WeChatCrypto
@@ -84,8 +85,6 @@ def get_resp_message(request, source_msg, mode=None):
     if request_msg_type == 'text':
         reply = TextReply(content='{}'.format(get_text_reply(request, request_msg.content)), message=request_msg)
     elif request_msg_type == 'image':
-        # reply = ImageReply(message=request_msg)
-        # reply.media_id = request_msg.media_id
         reply = TextReply(content=howold(request_msg.image), message=request_msg)
     elif request_msg_type == 'voice':
         if not request_msg.recognition:
@@ -95,7 +94,9 @@ def get_resp_message(request, source_msg, mode=None):
             tts = gTTS(text=content, lang='zh-cn')
             tts.save(os.path.join(config.SPEECH_DATA_DIR, 'good.mp3'))
             with open(os.path.join(config.SPEECH_DATA_DIR, 'good.mp3'), mode='rb') as f:
-                res = WeChatMedia().upload('voice', f)
+                client = WeChatClient(config.WECHAT_APPID, config.WECHAT_SECRET)
+                res = WeChatMedia(client=client).upload('voice', f)
+
                 print('>>>', res)
 
             reply = TextReply(content='{}'.format(content), message=request_msg)
