@@ -10,7 +10,7 @@ optionaldict==0.1.1
 pycparser==2.18
 python-dateutil==2.6.1
 requests==2.18.1
-sanic==0.5.4
+sanic==20.12.6
 six==1.10.0
 ujson==1.35
 urllib3==1.21.1
