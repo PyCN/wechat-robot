@@ -9,7 +9,7 @@ idna==2.5
 optionaldict==0.1.1
 pycparser==2.18
 python-dateutil==2.6.1
-requests==2.18.1
+requests==2.20.0
 sanic==20.12.6
 six==1.10.0
 ujson==1.35
