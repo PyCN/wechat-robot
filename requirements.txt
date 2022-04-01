@@ -13,7 +13,7 @@ requests==2.18.1
 sanic==20.12.6
 six==1.10.0
 ujson==1.35
-urllib3==1.21.1
+urllib3==1.26.5
 uvloop==0.8.0
 websockets==9.1
 wechatpy==1.4.2
